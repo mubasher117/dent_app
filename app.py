@@ -79,7 +79,7 @@ def process_files():
         contour_plot = img2.copy()
         contour_plot[scaled_top:scaled_bottom, scaled_left:scaled_right] = dent_heatmap
         img = Image.fromarray(contour_plot)
-        output_filename = "processed_" + "image_filename.png"
+        output_filename = "processed_" + image_filename
         output_path = os.path.join(app.config["UPLOAD_FOLDER"], output_filename)
         img.save(output_path)
 
