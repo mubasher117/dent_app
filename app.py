@@ -5,7 +5,6 @@ import base64
 import pandas as pd
 from PIL import Image
 from utilities import *
-import matplotlib.pyplot as plt
 import cv2
 import requests
 from io import BytesIO
@@ -27,12 +26,13 @@ def allowed_file(filename):
 @app.route("/api", methods=["POST"])
 def process_files():
     try:
-        image_url = request.form["image_url"]
+        data = request.get_json(force=True)
+        image_url = data["image_url"]
 
-        left = int(request.form["left"])
-        right = int(request.form["right"])
-        top = int(request.form["top"])
-        bottom = int(request.form["bottom"])
+        left = int(data["left"])
+        right = int(data["right"])
+        top = int(data["top"])
+        bottom = int(data["bottom"])
         image_file = requests.get(image_url)
 
         image_filename = secure_filename(os.path.basename(image_url))
