@@ -8,8 +8,9 @@ from utilities import *
 import cv2
 import requests
 from io import BytesIO
-
+from flask_cors import CORS
 app = Flask(__name__)
+cors = CORS(app)
 
 # Set the upload folder and allowed extensions
 app.config["UPLOAD_FOLDER"] = "uploads"
