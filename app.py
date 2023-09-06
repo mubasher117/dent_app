@@ -31,7 +31,7 @@ def allowed_file(filename):
 def process_files():
     try:
         data = request.get_json(force=True)
-        
+
         image_url = data["image_url"]
         image_file = requests.get(image_url)
 
@@ -85,9 +85,10 @@ def process_files():
         corner_value = corner_dict[corner_choice]
         dent_diff, _, _ = extract_dent(ary_box, corner_value)
         dent_heatmap, _, _ = to_heatmap(dent_diff)
-        
+
         upper_limit, lower_limit = get_limits(dent_diff)
-        depth = (upper_limit-lower_limit)*1000
+        depth = (upper_limit - lower_limit) * 1000
+        height, width = compute_Height_Width(df_box)
 
         contour_plot = img2.copy()
         contour_plot[scaled_top:scaled_bottom, scaled_left:scaled_right] = dent_heatmap
@@ -103,8 +104,8 @@ def process_files():
         # Return the response with the base64 encoded image and success message
         response = {
             "heatMap": encoded_image,
-            "height": 0,
-            "width": 0,
+            "height": height,
+            "width": width,
             "depth": depth,
         }
         return jsonify(response), 200

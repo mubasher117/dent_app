@@ -4,14 +4,14 @@ import pandas as pd
 import numpy as np
 
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 import cv2
 from PIL import Image
 
-import os
+# import os
 
 import numpy as np
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 
 from utilities import *
 
@@ -107,7 +107,7 @@ def main():
         except Exception as e:
             st.write("Error:", e)
         
-    uploaded_file = st.sidebar.file_uploader("Choose a Depth file e.g. 'mirrorValue.csv'", type=["csv"])
+    uploaded_file = st.sidebar.file_uploader("Choose a Depth file e.g. 'mirrorValue.txt'", type=["csv"])
     if uploaded_file is not None:
         # print(uploaded_file)
         # print(os.path.abspath(uploaded_file.name))
@@ -161,8 +161,13 @@ def main():
         upper_limit, lower_limit = get_limits(cum_min_dent_diff)
         st.write(f'Minimum Depth Difference: {(upper_limit-lower_limit)*1000} mm')
         f.write(f'Minimum Depth Difference:  {(upper_limit-lower_limit)*1000} mm')
-        f.close()
+        
+        # Compute height and width of the dent   
+        height, width = compute_Height_Width(df_box)
 
+        st.write(f'Height: {height} mm, Width: {width} mm')
+        f.write(f'Height: {height} mm, Width: {width} mm')
+        f.close()
 
         if save_diff:
             np.savetxt(f'{projectName}_{corner_choice}_Corner_dent_diff.csv',dent_diff,delimiter = ',')

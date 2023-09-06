@@ -111,6 +111,7 @@ def extract_dent(ary_box, corner=0):
         cmin = 0
         cmax = c
     
+    
     ref_corner = ary_box[r,c]
     
     for j in range(ncols):
@@ -225,3 +226,23 @@ def path_to_pts(objects):
     except Exception as e:
             print("Error:", e)
     return pts_array
+
+def computeUnitPixels(depth):
+    return 27.283*depth**2-142.03*depth+225.42
+
+def computeWidth(width, widthUnitPixels):
+    return 59/widthUnitPixels*width
+def computeheight(height, heightUnitPixels):
+    return 59/heightUnitPixels*height
+
+def compute_Height_Width(dfbox):
+    depth_toprow = dfbox.iloc[0].mean()
+    depth_leftCol = dfbox.iloc[:,0].mean()
+
+    widthUnitPixels= computeUnitPixels(depth_toprow)
+    heightUnitPixels= computeUnitPixels(depth_leftCol)
+
+    boxWidth = computeWidth(dfbox.shape[1], widthUnitPixels)
+    boxHeight = computeheight(dfbox.shape[0], heightUnitPixels)
+
+    return boxHeight, boxWidth
