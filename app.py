@@ -78,7 +78,6 @@ def process_files():
         corner_value = corner_dict[corner_choice]
         dent_diff, _, _ = extract_dent(ary_box, corner_value)
         dent_heatmap, _, _ = to_heatmap(dent_diff)
-        # ... Perform your desired processing on the CSV data using the provided integer ...
         contour_plot = img2.copy()
         contour_plot[scaled_top:scaled_bottom, scaled_left:scaled_right] = dent_heatmap
         img = Image.fromarray(contour_plot)
