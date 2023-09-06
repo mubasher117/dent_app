@@ -1,4 +1,4 @@
-activate_this = '/home/ubuntu/dent_app/venv/bin/activate_this.py'
+activate_this = '/home/ubuntu/dent_app/venv/bin/activate'
 with open(activate_this) as f:
     exec(f.read(), dict(__file__=activate_this))
 import sys
