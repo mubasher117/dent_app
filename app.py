@@ -10,6 +10,7 @@ import cv2
 import requests
 from io import BytesIO
 from flask_cors import CORS
+from io import StringIO
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -30,13 +31,19 @@ def allowed_file(filename):
 def process_files():
     try:
         data = request.get_json(force=True)
+        
         image_url = data["image_url"]
+        image_file = requests.get(image_url)
+
+        mirror_value_url = data["mirror_value_url"]
+        mirror_value_response = requests.get(mirror_value_url)
+        mirror_value_text = mirror_value_response.text
+        csv_data = StringIO(mirror_value_text)
 
         left = int(data["left"])
         right = int(data["right"])
         top = int(data["top"])
         bottom = int(data["bottom"])
-        image_file = requests.get(image_url)
 
         image_filename = secure_filename(os.path.basename(image_url))
         image_file_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
@@ -60,11 +67,11 @@ def process_files():
         scaled_right = scaled_width(left + width, original_image_width, 192)
         scaled_bottom = scaled_height(top + height, original_image_height, 256)
 
-        app_dir = os.path.dirname(os.path.abspath(__file__))
+        # app_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Construct the file path to the CSV file
-        csv_file_path = os.path.join(app_dir, "data", "mirrorValue.csv")
-        df = pd.read_csv(csv_file_path)
+        # csv_file_path = os.path.join(app_dir, "data", "mirrorValue.csv")
+        df = pd.read_csv(csv_data)
         df_box = df.iloc[scaled_top:scaled_bottom, scaled_left:scaled_right]
 
         ary_box = df_box.values
@@ -78,6 +85,10 @@ def process_files():
         corner_value = corner_dict[corner_choice]
         dent_diff, _, _ = extract_dent(ary_box, corner_value)
         dent_heatmap, _, _ = to_heatmap(dent_diff)
+        
+        upper_limit, lower_limit = get_limits(dent_diff)
+        depth = (upper_limit-lower_limit)*1000
+
         contour_plot = img2.copy()
         contour_plot[scaled_top:scaled_bottom, scaled_left:scaled_right] = dent_heatmap
         img = Image.fromarray(contour_plot)
@@ -94,7 +105,7 @@ def process_files():
             "heatMap": encoded_image,
             "height": 0,
             "width": 0,
-            "depth": 0,
+            "depth": depth,
         }
         return jsonify(response), 200
 
