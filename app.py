@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
+import sys
 import base64
 import pandas as pd
 from PIL import Image
@@ -9,6 +10,7 @@ import cv2
 import requests
 from io import BytesIO
 from flask_cors import CORS
+
 app = Flask(__name__)
 cors = CORS(app)
 
@@ -98,7 +100,8 @@ def process_files():
         return jsonify(response), 200
 
     except Exception as e:
-        print(str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("Line No: " + str(exc_tb.tb_lineno) + ": " + str(e))
         return jsonify({"error": "Server Error"}), 400
 
 
